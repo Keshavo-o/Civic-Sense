@@ -1,0 +1,34 @@
+{
+  "name": "civic-sense",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Keshavo-o/Civic-Sense.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Keshavo-o/Civic-Sense/issues"
+  },
+  "homepage": "https://github.com/Keshavo-o/Civic-Sense#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "crypto": "^1.0.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.0",
+    "nodemailer": "^7.0.6",
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7"
+  }
+}

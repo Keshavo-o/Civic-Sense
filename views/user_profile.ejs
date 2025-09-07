@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Portal | Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#111111',
+            accent: '#f97316',
+            offwhite: '#f5f5f5'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-offwhite font-sans text-primary">
+
+  <!-- Navbar -->
+  <nav class="bg-primary text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">Citizen Portal</h1>
+    <ul class="flex gap-6">
+      <li><a href="/user" class="hover:text-accent">Home</a></li>
+      <li><a href="/user/reports" class="hover:text-accent">Track My Reports</a></li>
+      <li><a href="/user/explore" class="hover:text-accent">Explore Issues</a></li>
+      <li><a href="/user/notifications" class="hover:text-accent">Notifications</a></li>
+      <li><a href="/user/profile" class="text-accent font-semibold">Profile</a></li>
+    </ul>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-6 py-10">
+    
+    <!-- User Info -->
+    <section class="bg-white rounded-2xl shadow p-6 mb-8">
+      <div class="flex items-center gap-6">
+        <div class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold">
+          <%= user.name[0] %>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold"><%= user.name %></h2>
+          <p class="text-gray-600"><%= user.email %></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section class="bg-white rounded-2xl shadow p-6 mb-8">
+      <h3 class="text-xl font-semibold mb-4">⚙️ Profile & Settings</h3>
+      <!-- <form action="/profile/update" method="POST" class="space-y-4"> -->
+        <form class="space-y-4">
+        <!-- Language -->
+        <div>
+          <label class="block font-medium mb-1">Language Preference</label>
+          <select name="language" class="w-full border rounded-lg px-4 py-2">
+            <option value="en" <% if(user.language === 'en'){ %>selected<% } %>>English</option>
+            <option value="hi" <% if(user.language === 'hi'){ %>selected<% } %>>हिन्दी</option>
+          </select>
+        </div>
+
+        <!-- Notifications -->
+        <div>
+          <label class="block font-medium mb-1">Notification Settings</label>
+          <div class="flex items-center gap-4">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="emailNotif" <% if(user.emailNotif){ %>checked<% } %> />
+              Email Alerts
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="smsNotif" <% if(user.smsNotif){ %>checked<% } %> />
+              SMS Alerts
+            </label>
+          </div>
+        </div>
+
+        <!-- <button type="submit" class="bg-accent text-white px-6 py-2 rounded-lg shadow hover:bg-orange-500"> -->
+        <button class="bg-accent text-white px-6 py-2 rounded-lg shadow hover:bg-orange-500">
+
+          Save Changes
+        </button>
+      </form>
+    </section>
+
+    <!-- Rewards -->
+    <section class="bg-white rounded-2xl shadow p-6 mb-8">
+      <h3 class="text-xl font-semibold mb-4">🏆 Rewards & Points</h3>
+      <p class="text-gray-600 mb-4">Your contribution helps the community. Earn points for active participation.</p>
+      <div class="bg-offwhite p-4 rounded-xl flex items-center justify-between">
+        <span class="font-bold text-lg">Total Points: <%= user.points || 0 %></span>
+        <button class="bg-primary text-white px-4 py-2 rounded-lg">View Leaderboard</button>
+      </div>
+    </section>
+
+    <!-- Logout -->
+    <div class="text-center">
+      <a href="/logout" class="bg-red-500 text-white px-6 py-2 rounded-lg shadow hover:bg-red-600">Logout</a>
+    </div>
+
+  </main>
+
+</body>
+</html>

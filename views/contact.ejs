@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JanSetu | Contact Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#111111',
+                        accent: '#f97316',
+                        offwhite: '#f5f5f5',
+                        brand: '#1c1c1c',
+                        'brand-light': '#383838'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-offwhite text-primary font-sans">
+
+    <!-- Header -->
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-lg text-primary z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+            <a href="/" class="flex items-center space-x-3">
+                <img src="/logo.png" alt="JanSetu Logo" class="h-12 w-auto">
+            </a>
+            <nav class="space-x-8 hidden md:flex font-medium">
+                <a href="/" class="relative hover:text-accent transition after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Home</a>
+                <a href="userlogin" class="relative hover:text-accent transition after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Login</a>
+
+                <a href="/about" class="relative hover:text-accent transition after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">About</a>
+                <a href="/contact" class="relative hover:text-accent transition after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Contact</a>
+            </nav>
+            <button id="menu-btn" class="md:hidden p-2 rounded-lg bg-accent text-white focus:outline-none transition-transform duration-300">
+                <span id="menu-icon" class="block">☰</span>
+            </button>
+        </div>
+
+        <div id="mobile-menu"
+            class="hidden flex-col space-y-3 px-6 py-6 bg-white shadow-xl rounded-b-2xl md:hidden transform transition-all duration-300 ease-in-out">
+            <a href="/" class="block px-4 py-3 rounded-xl bg-gray-100 text-gray-800 font-medium hover:bg-accent hover:text-white transition-all duration-200">🏠 Home</a>
+            <a href="/about" class="block px-4 py-3 rounded-xl bg-gray-100 text-gray-800 font-medium hover:bg-accent hover:text-white transition-all duration-200">ℹ️ About</a>
+            <a href="/contact" class="block px-4 py-3 rounded-xl bg-gray-100 text-gray-800 font-medium hover:bg-accent hover:text-white transition-all duration-200">📩 Contact</a>
+            <a href="userlogin" class="block px-4 py-3 rounded-xl bg-gray-100 text-gray-800 font-medium hover:bg-accent hover:text-white transition-all duration-200">🔑 User Login</a>
+        </div>
+    </header>
+    <br><br><br>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col justify-center items-center text-center relative bg-cover bg-center"
+        style="background-image: linear-gradient(rgba(17,17,17,0.7),rgba(17,17,17,0.7)), url('');">
+        <div class="text-white px-6 py-20">
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-up">Contact Us</h1>
+            <p class="text-lg md:text-xl font-light mb-8 max-w-3xl mx-auto animate-fade-in-up delay-200">
+                Reach out to us through any of the channels below. We’d love to hear from you!
+            </p>
+            <a href="/" class="px-8 py-3 bg-accent text-white rounded-full text-lg font-semibold hover:bg-orange-600 transition duration-300 ease-in-out shadow-lg transform hover:-translate-y-1">Home</a>
+
+        </div>
+        
+    </section>
+
+    <!-- Contact Cards -->
+    <section class="py-24 bg-offwhite">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12">Get in Touch</h2>
+            <div class="grid md:grid-cols-4 gap-8">
+
+                <!-- GitHub -->
+                <a href="https://github.com/yourusername" target="_blank" class="p-6 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition transform duration-300 hover:-translate-y-2 flex flex-col items-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" class="w-12 h-12 mb-4">
+                    <h3 class="font-semibold text-lg mb-2">GitHub</h3>
+                    <p class="text-gray-500 text-sm">github.com/yourusername</p>
+                </a>
+
+                <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/in/yourusername" target="_blank" class="p-6 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition transform duration-300 hover:-translate-y-2 flex flex-col items-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" class="w-12 h-12 mb-4">
+                    <h3 class="font-semibold text-lg mb-2">LinkedIn</h3>
+                    <p class="text-gray-500 text-sm">linkedin.com/in/yourusername</p>
+                </a>
+
+                <!-- Email -->
+                <a href="mailto:info@jansetu.gov.in" class="p-6 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition transform duration-300 hover:-translate-y-2 flex flex-col items-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email" class="w-12 h-12 mb-4">
+                    <h3 class="font-semibold text-lg mb-2">Email</h3>
+                    <p class="text-gray-500 text-sm">info@jansetu.gov.in</p>
+                </a>
+
+                <!-- Twitter -->
+                <a href="https://twitter.com/yourusername" target="_blank" class="p-6 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition transform duration-300 hover:-translate-y-2 flex flex-col items-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter" class="w-12 h-12 mb-4">
+                    <h3 class="font-semibold text-lg mb-2">Twitter</h3>
+                    <p class="text-gray-500 text-sm">@yourusername</p>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand text-white py-12">
+        <div class="max-w-7xl mx-auto text-center px-6">
+            <p class="text-sm text-gray-400">© 2025 Government of India | JanSetu Initiative | All Rights Reserved</p>
+        </div>
+    </footer>
+
+</body>
+</html>
