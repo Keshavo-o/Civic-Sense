@@ -23,14 +23,23 @@
       }
     }
   </script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 250px;
+      border-radius: 1rem;
+    }
+  </style>
 </head>
-<body class="bg-offwhite text-primary font-sans flex">
+<body class="bg-offwhite text-primary font-sans">
 
   <!-- Sidebar -->
-  <aside class="w-64 h-screen fixed top-0 left-0 bg-white border-r border-gray-200 flex flex-col justify-between">
+  <aside id="sidebar"
+    class="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 flex-col justify-between transform -translate-x-full md:translate-x-0 md:flex transition-transform duration-300 z-50">
     <div>
       <div class="p-6 flex items-center space-x-3">
-        <img src="/logo.png" class="h-20" alt="logo">
+        <img src="/logo.png" class="h-16" alt="logo">
       </div>
       <nav class="mt-8 space-y-2">
         <a href="/user" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
@@ -51,65 +60,185 @@
       </nav>
     </div>
     <div class="p-6">
-      <a href="/submit-report" 
+      <a href="/user/submit_report" 
          class="w-full block text-center px-6 py-3 bg-accent text-white font-semibold rounded-full hover:bg-orange-600 transition">
         ➕ Report Issue
       </a>
     </div>
   </aside>
 
-  <!-- Main Content -->
-  <main class="ml-64 flex-1 p-8">
-    <header class="flex justify-between items-center mb-8">
-      <h1 class="text-2xl font-bold">Hello, <% if(user) { %><%= user.name %><% } %> 👋</h1>
-      <button class="px-4 py-2 bg-brand text-white rounded-full hover:bg-brand-light transition">Settings</button>
-    </header>
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40 md:hidden"></div>
 
-    <!-- Quick Actions -->
-    <section class="grid md:grid-cols-3 gap-6 mb-8">
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-        <h3 class="text-lg font-semibold mb-2">Quick Report</h3>
-        <p class="text-gray-600 mb-4">Capture & submit an issue instantly.</p>
-        <a href="/submit-report" class="inline-block px-4 py-2 bg-accent text-white rounded-lg hover:bg-orange-600">Report Now</a>
-      </div>
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-        <h3 class="text-lg font-semibold mb-2">Track My Reports</h3>
-        <p class="text-gray-600 mb-4">View your submitted issues & progress.</p>
-        <a href="/reports" class="inline-block px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-light">Track</a>
-      </div>
-      <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-        <h3 class="text-lg font-semibold mb-2">Community Issues</h3>
-        <p class="text-gray-600 mb-4">See and support issues near you.</p>
-        <a href="/explore" class="inline-block px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-light">Explore</a>
-      </div>
-    </section>
+  <!-- Main + Right Side -->
+  <div class="md:ml-64 flex flex-col lg:flex-row">
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto lg:mx-0">
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-6">
+        <button id="menuBtn" class="md:hidden w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold">
+          <% if(user && user.username) { %><%= user.username.charAt(0).toUpperCase() %><% } else { %>U<% } %>
+        </button>
 
-    <!-- Notifications & Updates -->
-    <section class="bg-white rounded-2xl shadow p-6 mb-8">
-      <h2 class="text-xl font-bold mb-4">Recent Notifications</h2>
-      <ul class="space-y-4 text-gray-700">
-        <li class="flex items-start space-x-3">
-          <span>✅</span>
-          <p>Your issue <strong>#12345</strong> has been resolved.</p>
-        </li>
-        <li class="flex items-start space-x-3">
-          <span>🔔</span>
-          <p>New update from <strong>Water Department</strong> on issue <strong>#67890</strong>.</p>
-        </li>
-      </ul>
-    </section>
+        <h1 class="text-xl sm:text-2xl font-bold flex-1 text-center md:text-left">
+          Hello, <% if(user) { %><%= user.username %><% } %> 👋
+        </h1>
 
-    <!-- Top Issues Section -->
- 
+        <button class="hidden md:block px-4 py-2 bg-brand text-white rounded-full hover:bg-brand-light transition text-sm sm:text-base">
+          Settings
+        </button>
+      </header>
 
-    <!-- Map Section -->
-    <section class="bg-white rounded-2xl shadow p-6 mt-8">
-      <h2 class="text-xl font-bold mb-4">Community Issues Map</h2>
-      <div class="w-full h-80 bg-gray-200 rounded-xl flex items-center justify-center text-gray-500">
-        [Interactive Map Placeholder]
+      <!-- Post Composer -->
+      <section class="bg-white rounded-2xl shadow p-4 sm:p-6 mb-6">
+        <form action="/user/submit_report" method="POST">
+          <textarea 
+            name="report" 
+            rows="2" 
+            placeholder="What's happening?" 
+            class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent focus:outline-none resize-none"></textarea>
+          <div class="flex justify-end mt-3">
+            <button type="submit" class="px-6 py-2 bg-accent text-white rounded-full hover:bg-orange-600 transition">Post</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Feed -->
+<section class="space-y-6">
+  <% var posts = (typeof posts !== 'undefined' && posts) ? posts : []; %>
+  <% if (posts.length > 0) { %>
+    <% posts.forEach(function(post) { %>
+      <div class="bg-white rounded-2xl shadow hover:shadow-lg transition p-6">
+        <!-- Post Header -->
+        <div class="flex items-center space-x-3 mb-3">
+          <div class="w-12 h-12 flex-shrink-0 rounded-full bg-brand text-white flex items-center justify-center font-bold text-lg">
+            <% if(post.user && post.user.username) { %>
+              <%= post.user.username.charAt(0).toUpperCase() %>
+            <% } %>
+          </div>
+          <div>
+            <h4 class="font-semibold"><%= post.user.username %></h4>
+            <a  href="users/<%= post.user._id %>"><h6 class="text-sm text-gray-500">@<%= post.user._id %></h6></a>
+
+            <p class="text-sm text-black-500"><%= post.text %></p>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <p class="text-gray-800 mb-4"><%= post.content %></p>
+
+        <!-- Post Image -->
+        <% if(post.image) { %>
+          <div class="mb-4">
+            <img src="<%= post.image %>" alt="Post Image" class="w-full max-h-96 object-cover rounded-lg">
+          </div>
+        <% } %>
+
+        <!-- Post Actions -->
+     <div class="flex justify-between text-gray-500 text-sm border-t border-gray-200 pt-3 mt-3">
+  <button class="flex items-center gap-1 hover:text-accent transition-colors duration-200">
+    💬 Comments
+  </button>
+  <button class="flex items-center gap-1 hover:text-accent transition-colors duration-200">
+    🔁 Repost
+  </button>
+<button id="like-btn-<%= post._id %>" class="flex items-center gap-1 hover:text-accent transition-colors duration-200" onclick="likePost('<%= post._id %>')">
+  ❤️ Likes <b id="like-count-<%= post._id %>"><%= post.likes %></b>
+</button>
+
+  <button class="flex items-center gap-1 hover:text-accent transition-colors duration-200">
+    📤 Share
+  </button>
+</div>
+
       </div>
-    </section>
-  </main>
+      
+    <% }); %>
+  <% } else { %>
+    <p class="text-gray-500">No posts available.</p>
+  <% } %>
+</section>
+
+
+    </main>
+
+ <!-- Right Sidebar -->
+<aside class="w-full lg:w-[28rem] p-4 sm:p-6 space-y-6 lg:sticky lg:top-0 self-start h-fit"> 
+  <!-- Map -->
+  <div class="bg-white rounded-2xl shadow p-4">
+    <h2 class="font-bold text-lg mb-3">Community Issues Map</h2>
+    <div id="map-container" class="w-full h-72 bg-gray-100 flex items-center justify-center rounded-lg">
+      <p class="text-gray-400">Loading map...</p>
+    </div>
+    <button onclick="window.location.href='/map-view'" 
+      class="mt-4 w-full px-4 py-2 bg-accent text-white rounded-full hover:bg-orange-600 transition">
+      Open Full Map
+    </button>
+  </div>
+
+  <!-- Trending Issues -->
+  <div class="bg-white rounded-2xl shadow p-4">
+    <h2 class="font-bold text-lg mb-3">Trending Issues</h2>
+    <ul class="space-y-3">
+      <li class="border-b pb-2"> 🚧 Potholes in Sector 17 <span class="text-sm text-gray-500">(120 reports)</span> </li>
+      <li class="border-b pb-2"> 🌳 Park maintenance delay <span class="text-sm text-gray-500">(95 reports)</span> </li>
+      <li class="border-b pb-2"> 💡 Streetlight outages <span class="text-sm text-gray-500">(80 reports)</span> </li>
+    </ul>
+  </div>
+</aside>
+
+<script>
+  // Delay iframe load by 3 seconds
+  window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      document.getElementById("map-container").innerHTML = `
+        <iframe src="/map-view" class="w-full h-72 rounded-lg border" loading="lazy"></iframe>
+      `;
+    }, 3000);
+  });
+</script>
+
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 shadow-lg z-30">
+    <a href="/user" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🏠<span>Home</span></a>
+    <a href="/explore" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🌍<span>Explore</span></a>
+    <a href="/user/submit_report" class="flex items-center justify-center w-12 h-12 bg-accent text-white rounded-full -mt-8 shadow-lg hover:bg-orange-600">➕</a>
+    <a href="/notifications" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🔔<span>Alerts</span></a>
+    <a href="/user/profile" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">👤<span>Profile</span></a>
+  </nav>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    menuBtn?.addEventListener("click", () => {
+      sidebar.classList.toggle("-translate-x-full");
+      overlay.classList.toggle("hidden");
+    });
+
+    overlay?.addEventListener("click", () => {
+      sidebar.classList.add("-translate-x-full");
+      overlay.classList.add("hidden");
+    });
+
+    // Demo Map
+    var map = L.map('map').setView([28.6139, 77.2090], 12); // Delhi coords
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Demo marker
+    L.marker([28.6139, 77.2090]).addTo(map)
+      .bindPopup('Reported Issue: Road damage in Connaught Place')
+      .openPopup();
+  </script>
 
 </body>
 </html>

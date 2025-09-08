@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Portal | Submit Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#111111',
+            accent: '#f97316',
+            offwhite: '#f5f5f5'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-offwhite font-sans text-primary">
+
+  <!-- Navbar -->
+  <nav class="bg-primary text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">Citizen Portal</h1>
+    <a href="/user" class="bg-accent px-4 py-2 rounded-lg shadow hover:bg-orange-500 transition">
+      ⬅ Back to Home
+    </a>
+  </nav>
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+
+    <!-- Report Form -->
+    <section class="bg-white rounded-2xl shadow-lg p-8 text-center relative overflow-hidden">
+      <h2 class="text-2xl font-bold mb-6">📝 Submit a Report</h2>
+
+      <form id="reportForm" action="/user/submit_report" method="POST" enctype="multipart/form-data" class="space-y-6">
+        
+        <!-- Report Text -->
+        <textarea 
+          name="report" 
+          rows="5" 
+          required
+          maxlength="1000"
+          class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none resize-none"
+          placeholder="Describe the issue you want to report..."></textarea>
+        
+        <!-- Image Upload -->
+        <div>
+          <label class="block text-left font-semibold mb-2">📷 Attach Image (optional)</label>
+          <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer bg-offwhite hover:border-accent transition">
+            <input type="file" name="image" id="imageInput" accept="image/*" class="hidden">
+            <label for="imageInput" class="flex flex-col items-center justify-center cursor-pointer">
+              <span class="text-gray-500 mb-2">Click to upload or drag and drop</span>
+              <span class="px-4 py-2 bg-accent text-white rounded-lg shadow hover:bg-orange-500 transition">Choose Image</span>
+            </label>
+          </div>
+          <!-- Image Preview -->
+          <div id="imagePreview" class="mt-4 hidden">
+            <p class="text-sm text-gray-500 mb-2">Preview:</p>
+            <img id="previewImg" src="" alt="Preview" class="max-h-48 mx-auto rounded-lg shadow">
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="relative group w-full sm:w-auto px-8 py-3 bg-accent text-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:bg-orange-500">
+          <span class="relative z-10 font-semibold">🚀 Submit Report</span>
+          <div class="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-500 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+        </button>
+      </form>
+    </section>
+
+    <!-- Success Popup -->
+    <div id="successPopup" class="fixed inset-0 bg-black/60 flex items-center justify-center hidden z-50">
+      <div class="bg-white rounded-2xl shadow-2xl p-8 text-center animate-bounceIn">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500 flex items-center justify-center text-white text-3xl animate-pingOnce">
+          ✅
+        </div>
+        <h3 class="text-xl font-bold mb-2">Report Submitted!</h3>
+        <p class="text-gray-600 mb-4">Thank you for contributing to your community.</p>
+        <a href="/user" class="bg-primary text-white px-6 py-2 rounded-lg shadow hover:bg-gray-900 transition">
+          Back to Home
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <style>
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .animate-bounceIn { animation: bounceIn 0.6s ease forwards; }
+
+    @keyframes pingOnce {
+      0% { transform: scale(0.8); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pingOnce { animation: pingOnce 0.6s ease forwards; }
+  </style>
+
+  <script>
+    const form = document.getElementById("reportForm");
+    const popup = document.getElementById("successPopup");
+    const imageInput = document.getElementById("imageInput");
+    const imagePreview = document.getElementById("imagePreview");
+    const previewImg = document.getElementById("previewImg");
+
+    // Handle image preview
+    imageInput.addEventListener("change", function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          imagePreview.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Handle fake submit
+    // form.addEventListener("submit", function(e) {
+    //   e.preventDefault(); 
+    //   popup.classList.remove("hidden"); 
+    // });
+  </script>
+
+</body>
+</html>

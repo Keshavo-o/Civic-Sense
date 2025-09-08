@@ -32,8 +32,10 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'uploads')));
 
-app.use("/", restrictoLoginuseronly);//here we need to restrict environment for /user router only
+
+app.use("/user", restrictoLoginuseronly);//here we need to restrict environment for /user router only
 
 
 app.get('/', (req, res) => {
@@ -58,17 +60,25 @@ app.get('/signup', (req, res) => {
 app.get('/otp', (req, res) => {
   res.render('otp');
 });
+app.get('/map-view', (req, res) => {
+  res.render('map_view_everyone');
+});
+
+
 app.use('/user',userrouter);
+app.get('/users/:id', async (req, res) => {
+  return res.send("User profile page coming soon , id : "+ req.params.id);
+});
 
 app.post('/usersignup',handlecreateuser);
 app.post('/userlogin', handleloginform);
 app.post('/otp', verifyotp);
 
 
-app.get('/logout', (req, res) => {
-    res.clearCookie('token');
-    res.redirect('/login');
-});
+// app.get('/logout', (req, res) => {
+//     res.clearCookie('token');
+//     res.redirect('/login');
+// });
 
 
 app.get('*splat', (req, res) => {

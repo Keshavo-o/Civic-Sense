@@ -33,7 +33,7 @@ async function verifyotp(req, res)
         }
     );
     res.clearCookie('temp_token');
-    return res.redirect('/login');
+    return res.redirect('/userlogin');
 
 };
 module.exports = { verifyotp };

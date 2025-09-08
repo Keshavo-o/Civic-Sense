@@ -25,65 +25,43 @@
 <body class="bg-offwhite font-sans text-primary">
 
   <!-- Navbar -->
-  <nav class="bg-primary text-white px-6 py-4 flex justify-between items-center shadow">
-    <h1 class="text-xl font-bold">Citizen Portal</h1>
-    <ul class="flex gap-6">
-      <li><a href="/user" class="hover:text-accent">Home</a></li>
-      <li><a href="/user/reports" class="hover:text-accent">Track My Reports</a></li>
-      <li><a href="/user/explore" class="hover:text-accent">Explore Issues</a></li>
-      <li><a href="/user/notifications" class="hover:text-accent">Notifications</a></li>
-      <li><a href="/user/profile" class="text-accent font-semibold">Profile</a></li>
+  <nav class="bg-primary text-white px-6 py-4 flex flex-wrap justify-between items-center shadow">
+    <h1 class="text-xl font-bold w-full sm:w-auto text-center sm:text-left mb-4 sm:mb-0">Citizen Portal</h1>
+    <ul class="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto">
+      <li><a href="/user" class="hover:text-accent block">Home</a></li>
+      <li><a href="/user/reports" class="hover:text-accent block">Track My Reports</a></li>
+      <li><a href="/user/explore" class="hover:text-accent block">Explore Issues</a></li>
+      <li><a href="/user/notifications" class="hover:text-accent block">Notifications</a></li>
+      <li><a href="/user/profile" class="text-accent font-semibold block">Profile</a></li>
     </ul>
   </nav>
 
-  <main class="max-w-5xl mx-auto px-6 py-10">
-    
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+
     <!-- User Info -->
     <section class="bg-white rounded-2xl shadow p-6 mb-8">
-      <div class="flex items-center gap-6">
-        <div class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold">
-          <%= user.name[0] %>
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-accent to-primary flex items-center justify-center text-2xl font-bold text-white shadow flex-shrink-0">
+          <%= user.username[0] %>
         </div>
         <div>
-          <h2 class="text-2xl font-bold"><%= user.name %></h2>
+          <h2 class="text-2xl font-bold"><%= user.username %></h2>
           <p class="text-gray-600"><%= user.email %></p>
         </div>
       </div>
     </section>
 
-    <!-- Settings -->
+    <!-- Bio -->
     <section class="bg-white rounded-2xl shadow p-6 mb-8">
-      <h3 class="text-xl font-semibold mb-4">⚙️ Profile & Settings</h3>
-      <!-- <form action="/profile/update" method="POST" class="space-y-4"> -->
-        <form class="space-y-4">
-        <!-- Language -->
-        <div>
-          <label class="block font-medium mb-1">Language Preference</label>
-          <select name="language" class="w-full border rounded-lg px-4 py-2">
-            <option value="en" <% if(user.language === 'en'){ %>selected<% } %>>English</option>
-            <option value="hi" <% if(user.language === 'hi'){ %>selected<% } %>>हिन्दी</option>
-          </select>
-        </div>
-
-        <!-- Notifications -->
-        <div>
-          <label class="block font-medium mb-1">Notification Settings</label>
-          <div class="flex items-center gap-4">
-            <label class="flex items-center gap-2">
-              <input type="checkbox" name="emailNotif" <% if(user.emailNotif){ %>checked<% } %> />
-              Email Alerts
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="checkbox" name="smsNotif" <% if(user.smsNotif){ %>checked<% } %> />
-              SMS Alerts
-            </label>
-          </div>
-        </div>
-
-        <!-- <button type="submit" class="bg-accent text-white px-6 py-2 rounded-lg shadow hover:bg-orange-500"> -->
-        <button class="bg-accent text-white px-6 py-2 rounded-lg shadow hover:bg-orange-500">
-
-          Save Changes
+      <h3 class="text-xl font-semibold mb-4">📝 Bio</h3>
+      <form action="/user/update" method="POST" class="space-y-4">
+        <textarea 
+          name="bio" 
+          rows="4" 
+          class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none resize-none"
+          placeholder="Write something about yourself..."><%= user.bio || '' %></textarea>
+        <button class="w-full sm:w-auto bg-accent text-white px-6 py-2 rounded-lg shadow hover:bg-orange-500 transition">
+          Save Bio
         </button>
       </form>
     </section>
@@ -92,15 +70,17 @@
     <section class="bg-white rounded-2xl shadow p-6 mb-8">
       <h3 class="text-xl font-semibold mb-4">🏆 Rewards & Points</h3>
       <p class="text-gray-600 mb-4">Your contribution helps the community. Earn points for active participation.</p>
-      <div class="bg-offwhite p-4 rounded-xl flex items-center justify-between">
+      <div class="bg-offwhite p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <span class="font-bold text-lg">Total Points: <%= user.points || 0 %></span>
-        <button class="bg-primary text-white px-4 py-2 rounded-lg">View Leaderboard</button>
+        <button class="w-full sm:w-auto bg-primary text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
+          View Leaderboard
+        </button>
       </div>
     </section>
 
     <!-- Logout -->
     <div class="text-center">
-      <a href="/logout" class="bg-red-500 text-white px-6 py-2 rounded-lg shadow hover:bg-red-600">Logout</a>
+      <a href="/user/logout" class="inline-block w-full sm:w-auto bg-red-500 text-white px-6 py-2 rounded-lg shadow hover:bg-red-600 transition">Logout</a>
     </div>
 
   </main>
