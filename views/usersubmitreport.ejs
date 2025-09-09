@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Citizen Portal | Submit Report</title>
+  <title>Citizen Portal | Report to Department</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -32,23 +32,115 @@
     </a>
   </nav>
 
-  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
 
     <!-- Report Form -->
     <section class="bg-white rounded-2xl shadow-lg p-8 text-center relative overflow-hidden">
-      <h2 class="text-2xl font-bold mb-6">📝 Submit a Report</h2>
+      <h2 class="text-2xl font-bold mb-1">🏛</h2>
+      <h2 class="text-2xl font-bold mb-6">Report to Department</h2>
 
-      <form id="reportForm" action="/user/submit_report" method="POST" enctype="multipart/form-data" class="space-y-6">
+
+      <form id="deptReportForm" action="/user/submit_report" method="POST" enctype="multipart/form-data" class="space-y-6">
+
+        <!-- Report Title -->
+        <input 
+          type="text" 
+          name="title" 
+          required
+          maxlength="100"
+          class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none"
+          placeholder="Enter a short title for the report (e.g., Road Damage, Garbage Issue)">
         
         <!-- Report Text -->
         <textarea 
           name="report" 
           rows="5" 
           required
-          maxlength="1000"
+          maxlength="2000"
           class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none resize-none"
           placeholder="Describe the issue you want to report..."></textarea>
-        
+
+        <!-- Department Selection -->
+        <div>
+          <label class="block text-left font-semibold mb-2">🏢 Choose the Department Relevant to Your Complaint
+</label>
+          <select name="department" required class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none">
+            <option value="">-- Select Department --</option>
+            <option value="sanitation">Solid Waste Management Department</option>
+            <option value="roads">Public Works Department (PWD)</option>
+            <option value="water">Water Supply & Sewerage Department / Jal Board</option>
+            <option value="electricity">State Electricity Board / DISCOM</option>
+            <option value="law">Police Department (Law & Order)</option>
+            <option value="health">Municipal Health Department</option>
+            <option value="education">Municipal Education Department</option>
+            <option value="parks">Horticulture / Parks & Gardens Department</option>
+            <option value="urban">Urban Development / Town Planning Department</option>
+            <option value="other">Other Civic Issues</option>
+
+          </select>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label class="block text-left font-semibold mb-2">📌 Category</label>
+          <select name="category" required class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none">
+            <option value="">-- Select Category --</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="safety">Safety Issue</option>
+            <option value="public">Public Grievance</option>
+            <option value="emergency">Emergency</option>
+            <option value="suggestion">Suggestion</option>
+          </select>
+        </div>
+
+        <!-- Priority -->
+        <div>
+          <label class="block text-left font-semibold mb-2">⚡ Priority</label>
+          <select name="priority" required class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none">
+            <option value="normal">Normal</option>
+            <option value="urgent">Urgent</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+
+        <!-- Location Autofetch -->
+<div>
+  <label class="block text-left font-semibold mb-2">📍 Location</label>
+  <input 
+    type="text" 
+    id="location" 
+    name="location" 
+    required
+    class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none mb-2"
+    placeholder="Fetching location...">
+  <button type="button" onclick="getLocation()" class="px-4 py-2 bg-accent text-white rounded-lg shadow hover:bg-orange-500 transition">
+    📡 Autofetch Location
+  </button>
+</div>
+
+<!-- Coordinates -->
+<div class="mt-4">
+  <label class="block text-left font-semibold mb-2">🌐 Coordinates (Approx. Latitude & Longitude)</label>
+  <div class="flex space-x-2">
+    <input 
+      type="text" 
+      id="latitude" 
+      name="latitude" 
+      class="w-1/2 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none"
+      placeholder="latitude">
+    <input 
+      type="text" 
+      id="longitude" 
+      name="longitude" 
+      class="w-1/2 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none"
+      placeholder="Longitude">
+  </div>
+  <button type="button" onclick="getCoordinates()" class="mt-2 px-4 py-2 bg-accent text-white rounded-lg shadow hover:bg-orange-500 transition">
+    📍 Autofetch Coordinates
+  </button>
+</div>
+
+
         <!-- Image Upload -->
         <div>
           <label class="block text-left font-semibold mb-2">📷 Attach Image (optional)</label>
@@ -83,7 +175,7 @@
           ✅
         </div>
         <h3 class="text-xl font-bold mb-2">Report Submitted!</h3>
-        <p class="text-gray-600 mb-4">Thank you for contributing to your community.</p>
+        <p class="text-gray-600 mb-4">Your report has been successfully sent to the department.</p>
         <a href="/user" class="bg-primary text-white px-6 py-2 rounded-lg shadow hover:bg-gray-900 transition">
           Back to Home
         </a>
@@ -109,11 +201,77 @@
   </style>
 
   <script>
-    const form = document.getElementById("reportForm");
+    const form = document.getElementById("deptReportForm");
     const popup = document.getElementById("successPopup");
     const imageInput = document.getElementById("imageInput");
     const imagePreview = document.getElementById("imagePreview");
     const previewImg = document.getElementById("previewImg");
+    const locationInput = document.getElementById("location");
+
+    // Autofetch location
+
+  // Fetch Address (Location)
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }
+
+  function showPosition(position) {
+    let lat = position.coords.latitude;
+    let lon = position.coords.longitude;
+
+    // Fill coordinates if present
+    document.getElementById("latitude").value = lat;
+    document.getElementById("longitude").value = lon;
+
+    // Reverse Geocoding (Optional - fetch human-readable address using OpenStreetMap Nominatim API)
+    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.display_name) {
+          document.getElementById("location").value = data.display_name;
+        } else {
+          document.getElementById("location").value = `${lat}, ${lon}`;
+        }
+      })
+      .catch(() => {
+        document.getElementById("location").value = `${lat}, ${lon}`;
+      });
+  }
+
+  function showError(error) {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        alert("User denied the request for Geolocation.");
+        break;
+      case error.POSITION_UNAVAILABLE:
+        alert("Location information is unavailable.");
+        break;
+      case error.TIMEOUT:
+        alert("The request to get user location timed out.");
+        break;
+      case error.UNKNOWN_ERROR:
+        alert("An unknown error occurred.");
+        break;
+    }
+  }
+
+  // Fetch only Coordinates
+  function getCoordinates() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        document.getElementById("latitude").value = position.coords.latitude;
+        document.getElementById("longitude").value = position.coords.longitude;
+      }, showError);
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }
+
+
 
     // Handle image preview
     imageInput.addEventListener("change", function() {
@@ -128,7 +286,7 @@
       }
     });
 
-    // Handle fake submit
+    // Fake popup (remove if real backend is connected)
     // form.addEventListener("submit", function(e) {
     //   e.preventDefault(); 
     //   popup.classList.remove("hidden"); 

@@ -29,7 +29,9 @@ async function verifyotp(req, res)
             username: temp_user.username,
             email: temp_user.email,
             password: temp_user.password
-            , salt: temp_user.salt
+            , salt: temp_user.salt,
+            notifications:["Hii , your account has been created successfully !!"] 
+            
         }
     );
     res.clearCookie('temp_token');

@@ -1,11 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JanSetu | User Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#111111',
+            accent: '#f97316',
+            offwhite: '#f5f5f5',
+            brand: '#1c1c1c',
+            'brand-light': '#383838'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 250px;
+      border-radius: 1rem;
+    }
+  </style>
 </head>
-<body>
-    Hii
+<body class="bg-offwhite text-primary font-sans">
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 flex-col justify-between transform -translate-x-full md:translate-x-0 md:flex transition-transform duration-300 z-50">
+    <div>
+      <div class="p-6 flex items-center space-x-3">
+        <img src="/logo.png" class="h-16" alt="logo">
+      </div>
+      <nav class="mt-8 space-y-2">
+        <a href="/user" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          🏠 <span class="ml-3 font-medium">Home</span>
+        </a>
+        <a href="/user/reports" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          📑 <span class="ml-3 font-medium">Track Reports</span>
+        </a>
+        <a href="/user/explore" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          🌍 <span class="ml-3 font-medium">Explore Issues</span>
+        </a>
+        <a href="/user/notifications" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          🔔 <span class="ml-3 font-medium">Notifications</span>
+        </a>
+        <a href="/user/profile" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          👤 <span class="ml-3 font-medium">Profile</span>
+        </a>
+      </nav>
+    </div>
+    <div class="p-6">
+      <a href="/user/submit_report" 
+         class="w-full block text-center px-6 py-3 bg-accent text-white font-semibold rounded-full hover:bg-orange-600 transition">
+        ➕ Report Issue
+      </a>
+    </div>
+  </aside>
+
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40 md:hidden"></div>
+
+  <!-- Main + Right Side -->
+  <div class="md:ml-64 flex flex-col lg:flex-row">
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto lg:mx-0">
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-6">
+        <button id="menuBtn" class="md:hidden w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold">
+          <% if(user && user.username) { %><%= user.username.charAt(0).toUpperCase() %><% } else { %>U<% } %>
+        </button>
+
+        <h1 class="text-xl sm:text-2xl font-bold flex-1 text-center md:text-left">
+          Hello, <% if(user) { %><%= user.name %><% } %> 👋
+        </h1>
+
+        <button class="hidden md:block px-4 py-2 bg-brand text-white rounded-full hover:bg-brand-light transition text-sm sm:text-base">
+          Settings
+        </button>
+      </header>
+
+
+      <!-- Feed -->
+<section class="space-y-6">
+  <% var posts = (typeof posts !== 'undefined' && posts) ? posts : []; %>
+  <% if (posts.length > 0) { %>
+    <% posts.forEach(function(post) { %>
+      <div class="bg-white rounded-2xl shadow hover:shadow-lg transition p-6">
+
+        <!-- Post Header -->
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 flex-shrink-0 rounded-full bg-brand text-white flex items-center justify-center font-bold text-lg">
+              <%= post.user.username.charAt(0).toUpperCase() %>
+            </div>
+            <div>
+              <h4 class="font-semibold"><%= post.user.username %></h4>
+              <a href="/users/<%= post.user._id %>">
+                <h6 class="text-sm text-gray-500">@<%= post.user._id %></h6>
+              </a>
+            </div>
+          </div>
+          <span class="text-sm font-semibold px-3 py-1 rounded-full 
+                       <%= post.status === 'Pending' ? 'bg-yellow-200 text-yellow-800' :
+                           post.status === 'Resolved' ? 'bg-green-200 text-green-800' :
+                           'bg-gray-200 text-gray-800' %>">
+            <%= post.status %>
+          </span>
+        </div>
+
+        <!-- Post Title & Text -->
+        <h3 class="font-bold text-lg mb-2"><%= post.title %></h3>
+        <p class="text-gray-800 mb-4"><%= post.text %></p>
+
+        <!-- Post Image -->
+        <% if(post.image) { %>
+          <div class="mb-4">
+            <img src="/<%= post.image %>" alt="Post Image" class="w-full max-h-96 object-cover rounded-lg">
+          </div>
+        <% } %>
+
+        <!-- Post Details -->
+        <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-4">
+          <p><strong>Department:</strong> <%= post.department %></p>
+          <p><strong>Category:</strong> <%= post.category %></p>
+          <p><strong>Priority:</strong> <%= post.priority %></p>
+          <p><strong>Location:</strong> <%= post.location %></p>
+        </div>
+
+        <!-- Post Actions -->
+       
+
+      </div>
+    <% }); %>
+  <% } else { %>
+    <p class="text-gray-500">No posts available.</p>
+  <% } %>
+</section>
+
+
+
+
+  <!-- Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 shadow-lg z-30">
+    <a href="/user" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🏠<span>Home</span></a>
+    <a href="/explore" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🌍<span>Explore</span></a>
+    <a href="/user/submit_report" class="flex items-center justify-center w-12 h-12 bg-accent text-white rounded-full -mt-8 shadow-lg hover:bg-orange-600">➕</a>
+    <a href="/notifications" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🔔<span>Alerts</span></a>
+    <a href="/user/profile" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">👤<span>Profile</span></a>
+  </nav>
+
+
+
 </body>
 </html>

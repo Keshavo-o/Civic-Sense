@@ -45,13 +45,13 @@
         <a href="/user" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
           🏠 <span class="ml-3 font-medium">Home</span>
         </a>
-        <a href="/reports" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+        <a href="/user/reports" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
           📑 <span class="ml-3 font-medium">Track Reports</span>
         </a>
-        <a href="/explore" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+        <a href="/user/explore" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
           🌍 <span class="ml-3 font-medium">Explore Issues</span>
         </a>
-        <a href="/notifications" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+        <a href="/user/notifications" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
           🔔 <span class="ml-3 font-medium">Notifications</span>
         </a>
         <a href="/user/profile" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
@@ -136,15 +136,18 @@
 
         <!-- Post Actions -->
      <div class="flex justify-between text-gray-500 text-sm border-t border-gray-200 pt-3 mt-3">
+  <a href="/posts/<%= post._id %>">
   <button class="flex items-center gap-1 hover:text-accent transition-colors duration-200">
-    💬 Comments
+    💬 Comments <b><%= post.comments.length %></b>
   </button>
+</a>
   <button class="flex items-center gap-1 hover:text-accent transition-colors duration-200">
     🔁 Repost
   </button>
-<button id="like-btn-<%= post._id %>" class="flex items-center gap-1 hover:text-accent transition-colors duration-200" onclick="likePost('<%= post._id %>')">
+<a href="/posts/<%= post._id %>/like?t=1"><button id="like-btn-<%= post._id %>" class="flex items-center gap-1 hover:text-accent transition-colors duration-200" onclick="likePost('<%= post._id %>')">
   ❤️ Likes <b id="like-count-<%= post._id %>"><%= post.likes %></b>
 </button>
+</a>
 
   <button class="flex items-center gap-1 hover:text-accent transition-colors duration-200">
     📤 Share
@@ -176,15 +179,24 @@
     </button>
   </div>
 
-  <!-- Trending Issues -->
+  <!-- Trending Issues --> 
   <div class="bg-white rounded-2xl shadow p-4">
-    <h2 class="font-bold text-lg mb-3">Trending Issues</h2>
-    <ul class="space-y-3">
-      <li class="border-b pb-2"> 🚧 Potholes in Sector 17 <span class="text-sm text-gray-500">(120 reports)</span> </li>
-      <li class="border-b pb-2"> 🌳 Park maintenance delay <span class="text-sm text-gray-500">(95 reports)</span> </li>
-      <li class="border-b pb-2"> 💡 Streetlight outages <span class="text-sm text-gray-500">(80 reports)</span> </li>
-    </ul>
-  </div>
+  <h2 class="font-bold text-lg mb-3">Trending Issues</h2>
+  <ul class="space-y-3">
+    <% topPosts.forEach(function(post) { %>
+      <li class="border-b pb-2 cursor-pointer hover:text-accent"
+          onclick="window.location.href='/posts/<%= post._id %>'">
+        <% if(post.title) { %>
+          <%= post.title %> 
+        <% } else { %>
+          <%= post.text.substring(0, 30) %>... 
+        <% } %>
+        <span class="text-sm text-gray-500">(<%= post.likes %> likes)</span>
+      </li>
+    <% }) %>
+  </ul>
+</div>
+
 </aside>
 
 <script>
@@ -195,7 +207,7 @@
         <iframe src="/map-view" class="w-full h-72 rounded-lg border" loading="lazy"></iframe>
       `;
     }, 3000);
-  });
+  }); 
 </script>
 
 
@@ -204,9 +216,9 @@
   <!-- Bottom Nav -->
   <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 shadow-lg z-30">
     <a href="/user" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🏠<span>Home</span></a>
-    <a href="/explore" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🌍<span>Explore</span></a>
+    <a href="/user/explore" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🌍<span>Explore</span></a>
     <a href="/user/submit_report" class="flex items-center justify-center w-12 h-12 bg-accent text-white rounded-full -mt-8 shadow-lg hover:bg-orange-600">➕</a>
-    <a href="/notifications" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🔔<span>Alerts</span></a>
+    <a href="/user/notifications" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🔔<span>Alerts</span></a>
     <a href="/user/profile" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">👤<span>Profile</span></a>
   </nav>
 

@@ -1,11 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports Map</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    #map { height: 75vh; width: 100%; border-radius: 1rem; }
+    .leaflet-popup-content a {
+      color: #2563eb;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .leaflet-popup-content a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body>
-    Map
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-blue-600">📍 Live Report map</h1>
+      <nav class="flex gap-6 text-gray-600">
+        <a href="/user" class="hover:text-blue-600 transition">Home</a>
+
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+
+
+  <!-- Map Section -->
+  <main class="max-w-7xl mx-auto px-6 mt-8">
+    <div class="shadow-lg rounded-2xl overflow-hidden border border-gray-200">
+      <div id="map"></div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-10 bg-white border-t border-gray-200 py-6">
+    <div class="max-w-7xl mx-auto px-6 text-center text-gray-500 text-sm">
+      © 2025 JanSetu. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Inject reports from backend into JS
+    const reports = <%- JSON.stringify(reports) %>;
+
+    // Initialize map (center: Delhi)
+    const map = L.map('map').setView([28.7041, 77.1025], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Add markers for reports with valid coordinates & map_me_dikhana true
+    reports.forEach(report => {
+      if (report.map_me_dikhana && report.latitude && report.longitude) {
+        const lat = report.latitude;
+        const lng = report.longitude;
+
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(`
+            <a href="/posts/${report._id}"><b>${report.title || 'No title'}</b></a><br>
+            ${report.text || ''}<br>
+            <small class="text-gray-500"><i>${report.location || ''}</i></small>
+          `);
+      }
+    });
+  </script>
 </body>
 </html>

@@ -6,6 +6,11 @@ const path = require('path');
 const{handlecreateuser}=require("./controllers/signup_controller.js");
 const{handleloginform}=require("./controllers/login_controller.js");
 const{restrictoLoginuseronly}=require("./middlewares/auth.js");
+const{handlecomments } =require("./controllers/handle_comments.js");
+const{handlelike} = require("./controllers/handle_like.js")
+const{publicmapcontroller} = require("./controllers/publicmap.js")
+
+const{post_controller} = require("./controllers/post_controller_public.js");
 // const{verifyotp}=require("./services/otp_service.js");
 const{verifyotp}=require("./controllers/otp_controller.js");
 const cookieParser = require('cookie-parser');
@@ -60,9 +65,7 @@ app.get('/signup', (req, res) => {
 app.get('/otp', (req, res) => {
   res.render('otp');
 });
-app.get('/map-view', (req, res) => {
-  res.render('map_view_everyone');
-});
+app.get('/map-view',publicmapcontroller);
 
 
 app.use('/user',userrouter);
@@ -70,9 +73,13 @@ app.get('/users/:id', async (req, res) => {
   return res.send("User profile page coming soon , id : "+ req.params.id);
 });
 
+app.get('/posts/:post_id', post_controller);
+
 app.post('/usersignup',handlecreateuser);
 app.post('/userlogin', handleloginform);
 app.post('/otp', verifyotp);
+app.post("/posts/:post_id/comment",handlecomments);
+app.get("/posts/:post_id/like",handlelike);
 
 
 // app.get('/logout', (req, res) => {
