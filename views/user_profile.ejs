@@ -68,15 +68,51 @@
 
     <!-- Rewards -->
     <section class="bg-white rounded-2xl shadow p-6 mb-8">
-      <h3 class="text-xl font-semibold mb-4">🏆 Rewards & Points</h3>
-      <p class="text-gray-600 mb-4">Your contribution helps the community. Earn points for active participation.</p>
-      <div class="bg-offwhite p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span class="font-bold text-lg">Total Points: <%= user.points || 0 %></span>
-        <button class="w-full sm:w-auto bg-primary text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
-          View Leaderboard
-        </button>
+  <h3 class="text-xl font-semibold mb-4">🏆 Badges & Points</h3>
+  <p class="text-gray-600 mb-4">Your contribution helps the community. Earn points for active participation.</p>
+
+  <!-- Badges Row -->
+  <div class="flex items-center gap-6 mb-4">
+    <% if ((user.points || 0) < 100) { %>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/emoji/96/baby-chick.png" alt="Newbie Badge" class="w-12 h-12">
+        <span class="text-sm font-medium text-gray-700 mt-1">Newbie</span>
       </div>
-    </section>
+    <% } %>
+
+    <% if ((user.points || 0) >= 100 && user.points < 500) { %>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/color/96/seed-of-life.png" alt="Contributor Badge" class="w-12 h-12">
+        <span class="text-sm font-medium text-gray-700 mt-1">Contributor</span>
+      </div>
+    <% } %>
+
+    <% if ((user.points || 0) >= 500 && user.points < 1000) { %>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/fluency/96/rocket.png" alt="Achiever Badge" class="w-12 h-12">
+        <span class="text-sm font-medium text-gray-700 mt-1">Achiever</span>
+      </div>
+    <% } %>
+
+    <% if ((user.points || 0) >= 1000) { %>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/fluency/96/crown.png" alt="Legend Badge" class="w-12 h-12">
+        <span class="text-sm font-medium text-gray-700 mt-1">Legend</span>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Points + Leaderboard Button -->
+  <div class="bg-offwhite p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+    <span class="font-bold text-lg">Total Points: <%= user.points || 0 %></span>
+    <a href="/user/leaderboard">
+      <button class="w-full sm:w-auto bg-primary text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
+        View Leaderboard
+      </button>
+    </a>
+  </div>
+</section>
+
 
     <!-- Logout -->
     <div class="text-center">

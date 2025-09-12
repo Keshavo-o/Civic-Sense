@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Leaderboard | JanSetu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#111111',
+            accent: '#f97316',
+            offwhite: '#f5f5f5',
+            brand: '#1c1c1c',
+            'brand-light': '#383838'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-offwhite text-primary font-sans">
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 flex-col justify-between transform -translate-x-full md:translate-x-0 md:flex transition-transform duration-300 z-50 shadow-lg">
+    <div>
+      <div class="p-6 flex items-center space-x-3 border-b">
+        <img src="/logo.png" class="h-16" alt="logo">
+      </div>
+      <nav class="mt-6 space-y-2">
+        <a href="/user" class="flex items-center px-6 py-3 hover:bg-accent hover:text-white rounded-xl transition duration-200">
+          🏠 <span class="ml-3 font-medium">Home</span>
+        </a>
+        <a href="/user/explore" class="flex items-center px-6 py-3 hover:bg-accent hover:text-white rounded-xl transition duration-200">
+          🌍 <span class="ml-3 font-medium">Explore</span>
+        </a>
+        <a href="/leaderboard" class="flex items-center px-6 py-3 bg-accent text-white rounded-xl font-semibold shadow-md">
+          🏆 <span class="ml-3">Leaderboard</span>
+        </a>
+        <a href="/user/profile" class="flex items-center px-6 py-3 hover:bg-accent hover:text-white rounded-xl transition duration-200">
+          👤 <span class="ml-3 font-medium">Profile</span>
+        </a>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="md:ml-64 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+    <header class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">🏆 Leaderboard</h1>
+    </header>
+
+    <!-- Current user points -->
+    <section class="bg-white rounded-2xl shadow p-6 mb-6 hover:shadow-lg transition duration-200">
+      <h2 class="text-lg font-semibold mb-2">Your Stats</h2>
+      <p class="text-gray-600">Hello, <span class="font-bold"><%= user.username %></span> 👋</p>
+      <p class="text-gray-800 mt-2">
+        You currently have 
+        <span class="font-bold text-accent"><%= user.points %></span> points 🎯
+      </p>
+    </section>
+
+    <!-- Leaderboard Table -->
+    <section class="bg-white rounded-2xl shadow overflow-hidden hover:shadow-lg transition duration-200">
+      <table class="w-full border-collapse">
+        <thead class="bg-brand text-white">
+          <tr>
+            <th class="p-3 text-left">Rank</th>
+            <th class="p-3 text-left">User</th>
+            <th class="p-3 text-right">Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (users && users.length > 0) { %>
+            <% users.forEach(function(u, i) { %>
+              <tr class="border-b transition duration-200 
+                <% if (u._id.toString() === user._id.toString()) { %>
+                  bg-orange-50 font-bold
+                <% } else { %>
+                  hover:bg-gray-100
+                <% } %>">
+                <td class="p-3"><%= i + 1 %></td>
+                <td class="p-3 flex items-center gap-3">
+                  <img src="<%= u.pic %>" alt="avatar" class="w-8 h-8 rounded-full border border-gray-200">
+                  <%= u.username %>
+                </td>
+                <td class="p-3 text-right text-accent"><%= u.points %></td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="3" class="p-3 text-center text-gray-500">No users found</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 shadow-lg z-30">
+    <a href="/user" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🏠<span>Home</span></a>
+    <a href="/user/explore" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🌍<span>Explore</span></a>
+    <a href="/user/submit_report" class="flex items-center justify-center w-12 h-12 bg-accent text-white rounded-full -mt-8 shadow-lg hover:bg-orange-600 transition">➕</a>
+    <a href="/user/leaderboard" class="flex flex-col items-center text-sm text-accent font-bold">🏆<span>Rank</span></a>
+    <a href="/user/profile" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">👤<span>Profile</span></a>
+  </nav>
+
+</body>
+</html>

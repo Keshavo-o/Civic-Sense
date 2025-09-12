@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const multer = require('multer');
-
+ 
 const User = require('../models/user.js');
 const Report = require('../models/report.js');
 const { getuser } = require('../services/auth.js');
 const {handle_notifications}= require("../controllers/user_notification.js")
-const {handle_explore}= require("../controllers/user_explore.js")
+const {handle_explore}= require("../controllers/user_explore.js");
+const {handleleaderboard}= require("../controllers/leaderboard.js");
+
 
 
 // -------------------- MULTER SETUP --------------------
@@ -93,6 +95,11 @@ router.post('/update', async (req, res) => {
 
 // -------------------- REPORT ROUTES --------------------
 
+
+
+
+
+
 // Submit report page
 router.get('/submit_report', (req, res) => {
   res.render('usersubmitreport'); // Your EJS page for submitting a report
@@ -157,7 +164,8 @@ const userReports = await Report.find({
 })
 
 router.get('/notifications',handle_notifications);
-router.get('/explore',handle_explore);
+router.get('/explore', handle_explore);
+router.get('/leaderboard', handleleaderboard );
 
 
 router.post('/notifications/delete/:index', async (req, res) => {

@@ -8,13 +8,15 @@ const{handleloginform}=require("./controllers/login_controller.js");
 const{restrictoLoginuseronly}=require("./middlewares/auth.js");
 const{handlecomments } =require("./controllers/handle_comments.js");
 const{handlelike} = require("./controllers/handle_like.js")
-const{publicmapcontroller} = require("./controllers/publicmap.js")
+const{publicmapcontroller} = require("./controllers/publicmap.js");
+const{ handleusershow_ } = require("./controllers/view_user_controller.js");
 
 const{post_controller} = require("./controllers/post_controller_public.js");
 // const{verifyotp}=require("./services/otp_service.js");
 const{verifyotp}=require("./controllers/otp_controller.js");
 const cookieParser = require('cookie-parser');
 const userrouter=require("./Routers/user.js");
+const { handleusershow } = require('./controllers/view_user_controller.js');
 
 
 
@@ -69,9 +71,7 @@ app.get('/map-view',publicmapcontroller);
 
 
 app.use('/user',userrouter);
-app.get('/users/:id', async (req, res) => {
-  return res.send("User profile page coming soon , id : "+ req.params.id);
-});
+app.get('/users/:id', handleusershow_);
 
 app.get('/posts/:post_id', post_controller);
 

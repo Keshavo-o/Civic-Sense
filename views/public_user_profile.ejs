@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JanSetu | User - <%= user.username %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#111111',
+            accent: '#f97316',
+            offwhite: '#f5f5f5',
+            brand: '#1c1c1c',
+            'brand-light': '#383838'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 250px;
+      border-radius: 1rem;
+    }
+  </style>
+</head>
+<body class="bg-offwhite text-primary font-sans">
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 flex-col justify-between transform -translate-x-full md:translate-x-0 md:flex transition-transform duration-300 z-50">
+    <div>
+      <div class="p-6 flex items-center space-x-3">
+        <img src="/logo.png" class="h-16" alt="logo">
+      </div>
+      <nav class="mt-8 space-y-2">
+        <a href="/user" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          🏠 <span class="ml-3 font-medium">Home</span>
+        </a>
+        <a href="/user/reports" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          📑 <span class="ml-3 font-medium">Track Reports</span>
+        </a>
+        <a href="/user/explore" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          🌍 <span class="ml-3 font-medium">Explore Issues</span>
+        </a>
+        <a href="/user/notifications" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          🔔 <span class="ml-3 font-medium">Notifications</span>
+        </a>
+        <a href="/user/profile" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">
+          👤 <span class="ml-3 font-medium">Profile</span>
+        </a>
+      </nav>
+    </div>
+    <div class="p-6">
+      <a href="/user/submit_report" 
+         class="w-full block text-center px-6 py-3 bg-accent text-white font-semibold rounded-full hover:bg-orange-600 transition">
+        ➕ Report Issue
+      </a>
+    </div>
+  </aside>
+
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40 md:hidden"></div>
+
+  <!-- Main + Right Side -->
+  <div class="md:ml-64 flex flex-col lg:flex-row">
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto lg:mx-0">
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-6">
+        <button id="menuBtn" class="md:hidden w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold">
+          <% if(myuser && myuser.username) { %><%= myuser.username.charAt(0).toUpperCase() %><% } else { %>U<% } %>
+        </button>
+
+
+      </header>
+
+
+
+      <!-- Profile-->
+       <!-- User Info -->
+    <section class="bg-white rounded-2xl shadow p-6 mb-8">
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-accent to-primary flex items-center justify-center text-2xl font-bold text-white shadow flex-shrink-0">
+          <%= user.username[0] %>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold"><%= user.username %></h2>
+          <p class="text-gray-600"><%= user.email %></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bio -->
+    <section class="bg-white rounded-2xl shadow p-6 mb-8">
+      <h3 class="text-xl font-semibold mb-4">📝 Bio</h3>
+      <!-- <form action="/user/update" method="POST" class="space-y-4"> -->
+        <textarea 
+          name="bio" 
+          rows="4" 
+          readonly
+          class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-accent outline-none resize-none"
+          placeholder="Write something about yourself..."><%= user.bio || '' %></textarea>
+        <!-- <button class="w-full sm:w-auto bg-accent text-white px-6 py-2 rounded-lg shadow hover:bg-orange-500 transition">
+          Save Bio
+        </button> -->
+      <!-- </form> -->
+    </section>
+
+    <!-- Rewards -->
+    <section class="bg-white rounded-2xl shadow p-6 mb-8">
+  <h3 class="text-xl font-semibold mb-4">🏆 Badges & Points</h3>
+  <!-- <p class="text-gray-600 mb-4">Your contribution helps the community. Earn points for active participation.</p> -->
+
+  <!-- Badges Row -->
+  <div class="flex items-center gap-6 mb-4">
+    <% if ((user.points || 0) < 100) { %>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/emoji/96/baby-chick.png" alt="Newbie Badge" class="w-12 h-12">
+        <span class="text-sm font-medium text-gray-700 mt-1">Newbie</span>
+      </div>
+    <% } %>
+
+    <% if ((user.points || 0) >= 100 && user.points < 500) { %>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/color/96/seed-of-life.png" alt="Contributor Badge" class="w-12 h-12">
+        <span class="text-sm font-medium text-gray-700 mt-1">Contributor</span>
+      </div>
+    <% } %>
+
+    <% if ((user.points || 0) >= 500 && user.points < 1000) { %>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/fluency/96/rocket.png" alt="Achiever Badge" class="w-12 h-12">
+        <span class="text-sm font-medium text-gray-700 mt-1">Achiever</span>
+      </div>
+    <% } %>
+
+    <% if ((user.points || 0) >= 1000) { %>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/fluency/96/crown.png" alt="Legend Badge" class="w-12 h-12">
+        <span class="text-sm font-medium text-gray-700 mt-1">Legend</span>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Points + Leaderboard Button -->
+  <div class="bg-offwhite p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+    <span class="font-bold text-lg">Total Points: <%= user.points || 0 %></span>
+    <a href="/user/leaderboard">
+      <button class="w-full sm:w-auto bg-primary text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
+        View Leaderboard
+      </button>
+    </a>
+  </div>
+</section>
+    </main>
+
+ <!-- Right Sidebar -->
+<aside class="w-full lg:w-[28rem] p-4 sm:p-6 space-y-6 lg:sticky lg:top-0 self-start h-fit"> 
+  <!-- Map -->
+  <div class="bg-white rounded-2xl shadow p-4">
+    <h2 class="font-bold text-lg mb-3">Community Issues Map</h2>
+    <div id="map-container" class="w-full h-72 bg-gray-100 flex items-center justify-center rounded-lg">
+      <p class="text-gray-400">Loading map...</p>
+    </div>
+    <button onclick="window.location.href='/map-view'" 
+      class="mt-4 w-full px-4 py-2 bg-accent text-white rounded-full hover:bg-orange-600 transition">
+      Open Full Map
+    </button>
+  </div>
+
+
+</aside>
+
+<script>
+  // Delay iframe load by 3 seconds
+  window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      document.getElementById("map-container").innerHTML = `
+        <iframe src="/map-view" class="w-full h-72 rounded-lg border" loading="lazy"></iframe>
+      `;
+    }, 3000);
+  }); 
+</script>
+
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 shadow-lg z-30">
+    <a href="/user" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🏠<span>Home</span></a>
+    <a href="/user/explore" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🌍<span>Explore</span></a>
+    <a href="/user/submit_report" class="flex items-center justify-center w-12 h-12 bg-accent text-white rounded-full -mt-8 shadow-lg hover:bg-orange-600">➕</a>
+    <a href="/user/notifications" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🔔<span>Alerts</span></a>
+    <a href="/user/profile" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">👤<span>Profile</span></a>
+  </nav>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    menuBtn?.addEventListener("click", () => {
+      sidebar.classList.toggle("-translate-x-full");
+      overlay.classList.toggle("hidden");
+    });
+
+    overlay?.addEventListener("click", () => {
+      sidebar.classList.add("-translate-x-full");
+      overlay.classList.add("hidden");
+    });
+
+    // Demo Map
+    var map = L.map('map').setView([28.6139, 77.2090], 12); // Delhi coords
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Demo marker
+    L.marker([28.6139, 77.2090]).addTo(map)
+      .bindPopup('Reported Issue: Road damage in Connaught Place')
+      .openPopup();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JanSetu | Explore Issues</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#111111',
+            accent: '#f97316',
+            offwhite: '#f5f5f5',
+            brand: '#1c1c1c',
+            'brand-light': '#383838'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body class="bg-offwhite text-primary font-sans">
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 flex-col justify-between transform -translate-x-full md:translate-x-0 md:flex transition-transform duration-300 z-50">
+    <div>
+      <div class="p-6 flex items-center space-x-3">
+        <img src="/logo.png" class="h-16" alt="logo">
+      </div>
+      <nav class="mt-8 space-y-2">
+        <a href="/user" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">🏠 <span class="ml-3 font-medium">Home</span></a>
+        <a href="/user/reports" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">📑 <span class="ml-3 font-medium">Track Reports</span></a>
+        <a href="/user/explore" class="flex items-center px-6 py-3 bg-gray-100 rounded-xl font-semibold transition">🌍 <span class="ml-3 font-medium">Explore Issues</span></a>
+        <a href="/user/notifications" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">🔔 <span class="ml-3 font-medium">Notifications</span></a>
+        <a href="/user/profile" class="flex items-center px-6 py-3 hover:bg-gray-100 rounded-xl transition">👤 <span class="ml-3 font-medium">Profile</span></a>
+      </nav>
+    </div>
+    <div class="p-6">
+      <a href="/user/submit_report" class="w-full block text-center px-6 py-3 bg-accent text-white font-semibold rounded-full hover:bg-orange-600 transition">
+        ➕ Report Issue
+      </a>
+    </div>
+  </aside>
+
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40 md:hidden"></div>
+
+  <!-- Main + Right -->
+  <div class="md:ml-64 flex flex-col lg:flex-row">
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto lg:mx-0">
+
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-6">
+        <button id="menuBtn" class="md:hidden w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold">
+          <% if(user && user.username) { %><%= user.username.charAt(0).toUpperCase() %><% } else { %>U<% } %>
+        </button>
+        <h1 class="text-xl sm:text-2xl font-bold flex-1 text-center md:text-left">Explore Community Issues 🌍</h1>
+      </header>
+
+      <!-- Search Bar -->
+      <section class="bg-white rounded-2xl shadow p-4 sm:p-6 mb-6">
+    <form action="/user/explore" method="GET" class="flex gap-2">
+  <input 
+    type="text" 
+    name="search" 
+    placeholder="Search issues by keyword, location, or category..." 
+    value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" 
+    class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent focus:outline-none"
+  >
+  <button type="submit" class="px-6 py-2 bg-accent text-white rounded-xl hover:bg-orange-600 transition">
+    Search
+  </button>
+</form>
+
+      </section>
+
+      <!-- Issues Grid -->
+      <section class="grid gap-6 sm:grid-cols-2">
+        <% var posts = (typeof posts !== 'undefined' && posts) ? posts : []; %>
+        <% if (posts.length > 0) { %>
+          <% posts.forEach(function(post) { %>
+            <div class="bg-white rounded-2xl shadow hover:shadow-lg transition p-5 flex flex-col">
+              <!-- Header -->
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 flex-shrink-0 rounded-full bg-brand text-white flex items-center justify-center font-bold">
+                  <%= post.user.username.charAt(0).toUpperCase() %>
+                </div>
+                <div>
+                  <h4 class="font-semibold"><%= post.user.username %></h4>
+                  <p class="text-xs text-gray-500">@<%= post.user._id %></p>
+                </div>
+              </div>
+
+              <!-- Content -->
+              <p class="text-gray-800 mb-3 line-clamp-3"><%= post.text %></p>
+
+              <!-- Image -->
+              <% if(post.image) { %>
+                <img src="/<%= post.image %>" alt="Issue" class="w-full h-40 object-cover rounded-lg mb-3">
+              <% } %>
+
+              <!-- Footer -->
+              <div class="flex justify-between text-sm text-gray-500 mt-auto pt-3 border-t">
+                <a href="/posts/<%= post._id %>" class="hover:text-accent">💬 <%= post.comments.length %> Comments</a>
+                <span>❤️ <%= post.likes %></span>
+                <span>📍 Location</span>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p class="text-gray-500">No issues found.</p>
+        <% } %>
+      </section>
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="w-full lg:w-[28rem] p-4 sm:p-6 space-y-6 lg:sticky lg:top-0 self-start h-fit">
+      <!-- Map -->
+      <div class="bg-white rounded-2xl shadow p-4">
+        <h2 class="font-bold text-lg mb-3">Issues Map</h2>
+        <div id="map" class="w-full h-72 rounded-lg"></div>
+        <button onclick="window.location.href='/map-view'" 
+          class="mt-4 w-full px-4 py-2 bg-accent text-white rounded-full hover:bg-orange-600 transition">
+          Open Full Map
+        </button>
+      </div>
+
+      <!-- Trending -->
+      <div class="bg-white rounded-2xl shadow p-4">
+        <h2 class="font-bold text-lg mb-3">Trending Issues</h2>
+        <ul class="space-y-3">
+          <% topPosts.forEach(function(post) { %>
+            <li class="border-b pb-2 cursor-pointer hover:text-accent"
+                onclick="window.location.href='/posts/<%= post._id %>'">
+              <% if(post.title) { %>
+                <%= post.title %> 
+              <% } else { %>
+                <%= post.text.substring(0, 30) %>...
+              <% } %>
+              <span class="text-sm text-gray-500">(<%= post.likes %> likes)</span>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 shadow-lg z-30">
+    <a href="/user" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🏠<span>Home</span></a>
+    <a href="/user/explore" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent font-bold">🌍<span>Explore</span></a>
+    <a href="/user/submit_report" class="flex items-center justify-center w-12 h-12 bg-accent text-white rounded-full -mt-8 shadow-lg hover:bg-orange-600">➕</a>
+    <a href="/user/notifications" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">🔔<span>Alerts</span></a>
+    <a href="/user/profile" class="flex flex-col items-center text-sm text-gray-600 hover:text-accent">👤<span>Profile</span></a>
+  </nav>
+
+  <!-- Leaflet -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    menuBtn?.addEventListener("click", () => {
+      sidebar.classList.toggle("-translate-x-full");
+      overlay.classList.toggle("hidden");
+    });
+    overlay?.addEventListener("click", () => {
+      sidebar.classList.add("-translate-x-full");
+      overlay.classList.add("hidden");
+    });
+
+    // Map
+    var map = L.map('map').setView([28.6139, 77.2090], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Example marker
+    L.marker([28.6139, 77.2090]).addTo(map).bindPopup("Example Report: Road Damage");
+  </script>
+</body>
+</html>
